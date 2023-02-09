@@ -6,7 +6,9 @@ import java.util.Set;
 
 public interface CandidateRepository {
     void save(Set<Candidate> candidates);
+
     void delete(CandidateQuery query);
+
     List<Candidate> find(CandidateQuery query);
 
     default void save(Candidate candidate) {
@@ -14,6 +16,7 @@ public interface CandidateRepository {
     }
 
     default Optional<Candidate> findById(String candidateId) {
-        return find(new CandidateQuery.Builder().build()).stream().findFirst();
+        var query = new CandidateQuery.Builder().candidateIds(Set.of(candidateId)).build();
+        return find(query).stream().findFirst();
     }
 }
