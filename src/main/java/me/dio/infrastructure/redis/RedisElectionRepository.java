@@ -29,6 +29,6 @@ public class RedisElectionRepository implements ElectionRepository {
                                                                      entry -> entry.getValue().doubleValue()));
 
         commands.zadd("election:" + election.id(), rank);
-        pubsub.publish("election", election.id());
+        pubsub.publish("elections", election.id());
     }
 }
