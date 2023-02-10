@@ -15,9 +15,9 @@
     <quarkus.platform.version>2.16.2.Final</quarkus.platform.version>
     <skipITs>true</skipITs>
     <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
-    <testcontainers.mysql.username>quarkus</testcontainers.mysql.username>
-    <testcontainers.mysql.password>quarkus</testcontainers.mysql.password>
     <testcontainers.mysql.database>quarkus</testcontainers.mysql.database>
+    <testcontainers.mysql.password>quarkus</testcontainers.mysql.password>
+    <testcontainers.mysql.username>quarkus</testcontainers.mysql.username>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -153,15 +153,13 @@
               <goal>execute</goal>
             </goals>
             <configuration>
-              <source>
-                db = new org.testcontainers.containers.MySQLContainer("mysql:8.0")
+              <source>db = new org.testcontainers.containers.MySQLContainer("mysql:8.0")
                         .withUsername("${testcontainers.mysql.username}")
                         .withDatabaseName("${testcontainers.mysql.database}")
                         .withPassword("${testcontainers.mysql.password}")
 
                 db.start()
-                project.properties.setProperty("testcontainers.mysql.url", db.getJdbcUrl())
-              </source>
+                project.properties.setProperty("testcontainers.mysql.url", db.getJdbcUrl())</source>
             </configuration>
           </execution>
         </executions>
@@ -193,9 +191,7 @@
               <user>${testcontainers.mysql.username}</user>
               <password>${testcontainers.mysql.password}</password>
               <locations>
-                <location>
-                  filesystem:src/main/resources/db/migration
-                </location>
+                <location>filesystem:src/main/resources/db/migration</location>
               </locations>
             </configuration>
           </execution>
