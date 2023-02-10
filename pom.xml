@@ -15,6 +15,9 @@
     <quarkus.platform.version>2.16.2.Final</quarkus.platform.version>
     <skipITs>true</skipITs>
     <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
+    <testcontainers.mysql.username>quarkus</testcontainers.mysql.username>
+    <testcontainers.mysql.password>quarkus</testcontainers.mysql.password>
+    <testcontainers.mysql.database>quarkus</testcontainers.mysql.database>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -130,6 +133,65 @@
                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                 <maven.home>${maven.home}</maven.home>
               </systemPropertyVariables>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.gmaven</groupId>
+        <artifactId>groovy-maven-plugin</artifactId>
+        <version>2.1.1</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <source>
+                db = new org.testcontainers.containers.MySQLContainer("mysql:8.0")
+                        .withUsername("${testcontainers.mysql.username}")
+                        .withDatabaseName("${testcontainers.mysql.database}")
+                        .withPassword("${testcontainers.mysql.password}")
+
+                db.start()
+                project.properties.setProperty("testcontainers.mysql.url", db.getJdbcUrl())
+              </source>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <version>1.17.6</version>
+          </dependency>
+          <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.0.32</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-maven-plugin</artifactId>
+        <version>9.14.1</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>migrate</goal>
+            </goals>
+            <configuration>
+              <url>${testcontainers.mysql.url}</url>
+              <user>${testcontainers.mysql.username}</user>
+              <password>${testcontainers.mysql.password}</password>
+              <locations>
+                <location>
+                  filesystem:src/main/resources/db/migration
+                </location>
+              </locations>
             </configuration>
           </execution>
         </executions>
