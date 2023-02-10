@@ -56,9 +56,16 @@
       <artifactId>quarkus-jdbc-mysql</artifactId>
     </dependency>
     <dependency>
+      <!-- do not bump to 0.4.0: requires jakarta to properly work -->
       <groupId>io.quarkiverse.jooq</groupId>
       <artifactId>quarkus-jooq</artifactId>
-      <version>0.4.0</version>
+      <version>0.3.0</version>
+    </dependency>
+    <dependency>
+      <!-- added to fix quarkus-jooq dependencies for Native Image build -->
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.5.3</version>
     </dependency>
     <dependency>
       <groupId>org.inferred</groupId>
@@ -200,7 +207,7 @@
       <plugin>
         <groupId>org.jooq</groupId>
         <artifactId>jooq-codegen-maven</artifactId>
-        <version>3.16.11</version>
+        <version>3.15.5</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -217,7 +224,8 @@
               <generator>
                 <database>
                   <includes>.*</includes>
-                  <excludes>flyway_schema_history</excludes>
+                  <excludes>flyway_schema_history|created_at|updated_at</excludes>
+                  <includeExcludeColumns>true</includeExcludeColumns>
                   <inputSchema>${testcontainers.mysql.database}</inputSchema>
                 </database>
               </generator>
